@@ -225,4 +225,25 @@ export class SqlService {
   }
   
 
+  validateSqlSafety(sqlString) {
+    // Lista de comandos potencialmente perigosos
+    const dangerousCommands = [
+      'DROP DATABASE',
+      'DROP SCHEMA',
+      'TRUNCATE',
+      'ALTER SYSTEM',
+      'CREATE USER',
+      'DROP USER',
+      'GRANT',
+      'REVOKE'
+    ];
+    
+    const upperSql = sqlString.toUpperCase();
+    const foundDangerous = dangerousCommands.filter(cmd => upperSql.includes(cmd));
+    
+    return {
+      isSafe: foundDangerous.length === 0,
+      dangerousCommands: foundDangerous
+    };
+  }
 }

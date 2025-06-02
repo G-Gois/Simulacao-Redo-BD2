@@ -1,0 +1,343 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+		"name": "Simulacao Redo BD2 - SQL API",
+		"description": "Collection para testar a API de execução de comandos SQL",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "SQL Execute (Safe)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"sqlCommands\": \"SELECT * FROM clientes_em_memoria;\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/sql/execute",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"sql",
+						"execute"
+					]
+				},
+				"description": "Executa comandos SQL com validação de segurança"
+			},
+			"response": []
+		},
+		{
+			"name": "SQL Execute Unsafe",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"sqlCommands\": \"SELECT * FROM clientes_em_memoria;\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/sql/execute-unsafe",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"sql",
+						"execute-unsafe"
+					]
+				},
+				"description": "Executa comandos SQL sem validação de segurança"
+			},
+			"response": []
+		},
+		{
+			"name": "Inserir Cliente Simples",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"sqlCommands\": \"INSERT INTO clientes_em_memoria (id, nome, saldo) VALUES (100, 'Cliente Teste', 1500.00);\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/sql/execute",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"sql",
+						"execute"
+					]
+				},
+				"description": "Insere um cliente simples"
+			},
+			"response": []
+		},
+		{
+			"name": "Comandos Múltiplos",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"sqlCommands\": \"INSERT INTO clientes_em_memoria (id, nome, saldo) VALUES (101, 'Cliente A', 1000.00);\\nUPDATE clientes_em_memoria SET saldo = saldo + 100 WHERE id = 1;\\nSELECT * FROM clientes_em_memoria WHERE id IN (1, 101);\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/sql/execute",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"sql",
+						"execute"
+					]
+				},
+				"description": "Executa múltiplos comandos SQL"
+			},
+			"response": []
+		},
+		{
+			"name": "Transação com COMMIT",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"sqlCommands\": \"BEGIN;\\nINSERT INTO clientes_em_memoria (id, nome, saldo) VALUES (102, 'Cliente Transação', 500.00);\\nUPDATE clientes_em_memoria SET saldo = saldo - 50 WHERE id = 102;\\nSELECT * FROM clientes_em_memoria WHERE id = 102;\\nCOMMIT;\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/sql/execute",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"sql",
+						"execute"
+					]
+				},
+				"description": "Executa transação com COMMIT explícito"
+			},
+			"response": []
+		},
+		{
+			"name": "Transação sem COMMIT (Auto-Rollback)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"sqlCommands\": \"BEGIN;\\nINSERT INTO clientes_em_memoria (id, nome, saldo) VALUES (103, 'Cliente Temp', 300.00);\\nUPDATE clientes_em_memoria SET saldo = saldo + 200 WHERE id = 103;\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/sql/execute",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"sql",
+						"execute"
+					]
+				},
+				"description": "Transação sem COMMIT - será feito rollback automático"
+			},
+			"response": []
+		},
+		{
+			"name": "Transação com ROLLBACK",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"sqlCommands\": \"BEGIN;\\nINSERT INTO clientes_em_memoria (id, nome, saldo) VALUES (104, 'Cliente Rollback', 800.00);\\nUPDATE clientes_em_memoria SET saldo = saldo * 2 WHERE id = 104;\\nROLLBACK;\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/sql/execute",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"sql",
+						"execute"
+					]
+				},
+				"description": "Transação com ROLLBACK explícito"
+			},
+			"response": []
+		},
+		{
+			"name": "Comandos Mistos (Individual + Transação)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"sqlCommands\": \"INSERT INTO clientes_em_memoria (id, nome, saldo) VALUES (105, 'Cliente Individual', 1000);\\nUPDATE clientes_em_memoria SET saldo = saldo + 100 WHERE id = 1;\\nBEGIN;\\nINSERT INTO clientes_em_memoria (id, nome, saldo) VALUES (106, 'Cliente Transação', 500);\\nUPDATE clientes_em_memoria SET saldo = saldo - 50 WHERE id = 106;\\nCOMMIT;\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/sql/execute",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"sql",
+						"execute"
+					]
+				},
+				"description": "Comandos individuais + transação na mesma requisição"
+			},
+			"response": []
+		},
+		{
+			"name": "Comando Perigoso (Será Bloqueado)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"sqlCommands\": \"TRUNCATE TABLE clientes_em_memoria;\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/sql/execute",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"sql",
+						"execute"
+					]
+				},
+				"description": "Comando que será bloqueado pela validação de segurança"
+			},
+			"response": []
+		},
+		{
+			"name": "Comando Perigoso (Unsafe - Permitido)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"sqlCommands\": \"CREATE TEMP TABLE temp_clientes AS SELECT * FROM clientes_em_memoria LIMIT 3;\\nSELECT * FROM temp_clientes;\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/sql/execute-unsafe",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"sql",
+						"execute-unsafe"
+					]
+				},
+				"description": "Comando executado no modo unsafe (sem validação)"
+			},
+			"response": []
+		},
+		{
+			"name": "Consultar Logs",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"sqlCommands\": \"SELECT * FROM log ORDER BY log_id DESC LIMIT 10;\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/sql/execute",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"sql",
+						"execute"
+					]
+				},
+				"description": "Consulta os últimos 10 registros da tabela de log"
+			},
+			"response": []
+		},
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						""
+					]
+				},
+				"description": "Verifica se o servidor está funcionando"
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		}
+	]
+}
