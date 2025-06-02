@@ -1,16 +1,20 @@
-const db = require('./src/config/database');
-require('dotenv').config();
+import { config } from 'dotenv';
+import express from 'express';
+import db from './src/config/database.js';
+import sqlRoutes from './src/routes/sql.routes.js';
 
-const express = require('express');
+config(); // Carrega variáveis do .env
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
+app.use('/api/sql', sqlRoutes);
+
 app.get('/', (req, res) => {
   res.json({ message: 'Servidor funcionando!' });
 });
-
 
 async function testConnection() {
   try {
@@ -30,10 +34,11 @@ async function startServer() {
     console.log(`Servidor rodando na porta ${PORT}`);
     
     if (dbConnected) {
-      console.log('Sistema pronto para uso!');
+      console.log('Banco conectado com sucesso!');
     } else {
       console.log('Servidor iniciado, mas sem conexão com banco de dados');
     }
   });
 }
+
 startServer();
