@@ -52,7 +52,19 @@ export class RedoService {
             } else {
               operationsFailed++;
             }
-          } else {
+          } else if(String(operacao).toUpperCase() === 'DELETE') {
+            const deleteResult = await client.query(
+              `DELETE FROM clientes_em_memoria
+               WHERE id = $1;`,
+              [id_cliente]
+            );
+            if (deleteResult.rowCount > 0) {
+              operation = true;
+            } else {
+              operationsFailed++;
+            }
+          }else
+          {
             operationsFailed++;
           }
 
