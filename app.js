@@ -3,7 +3,7 @@ import express from 'express';
 import db from './src/config/database.js';
 import sqlRoutes from './src/routes/sql.routes.js';
 import redoRoutes from './src/routes/redo.routes.js';
-
+import stopRoutes from './src/routes/stop.routes.js';
 config(); // Carrega variáveis do .env
 
 const app = express();
@@ -13,6 +13,7 @@ app.use(express.json());
 
 app.use('/sql', sqlRoutes);
 app.use('/redo', redoRoutes);
+app.use('/stop', stopRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Servidor funcionando!' });
