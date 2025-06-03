@@ -35,7 +35,7 @@ export class SqlService {
   }
   
   hasTransactionCommands(sql) {
-    const transactionKeywords = /\b(BEGIN|START\s+TRANSACTION|COMMIT|ROLLBACK)\b/i;
+    const transactionKeywords = /\b(BEGIN|START\s+TRANSACTION|COMMIT|END|ROLLBACK)\b/i;
     return transactionKeywords.test(sql);
   }
   
@@ -62,7 +62,7 @@ export class SqlService {
             status: 'success',
             message: 'Transação iniciada'
           });
-        } else if (upperCommand.startsWith('COMMIT')) {
+        } else if (upperCommand.startsWith('COMMIT') || upperCommand.startsWith('END')) {
           if (inTransaction) {
             await client.query('COMMIT');
             hasExplicitCommit = true;
@@ -76,7 +76,7 @@ export class SqlService {
             results.push({
               command: command.trim(),
               status: 'warning',
-              message: 'COMMIT executado fora de transação'
+              message: `${upperCommand.startsWith('COMMIT') ? 'COMMIT' : 'END'} executado fora de transação`
             });
           }
         } else if (upperCommand.startsWith('ROLLBACK')) {
