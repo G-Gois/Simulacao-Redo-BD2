@@ -1,29 +1,34 @@
-// redo.controller.js (AJUSTADO)
-import { RedoService } from '../services/redo.service.js'; // Ajuste o caminho se necessário
+import { RedoService } from '../services/redo.service.js';
 
 const redoService = new RedoService();
 
 export class RedoController {
   async executeRedo(req, res) {
     try {
-      const redoSuccess = await redoService.executeRedo(); 
+      const result = await redoService.executeRedo();
 
-      if (redoSuccess) {
-        res.status(200).json({
+      if (result.success) {
+        return res.status(200).json({
           success: true,
-          message: 'Processo de REDO finalizado com sucesso.'
+          message: 'Processo de REDO finalizado com sucesso.',
+          redoTransactionsList: result.redoTransactionsList,
+          appliedData: result.appliedData
         });
       } else {
-        res.status(200).json({ 
+        return res.status(200).json({
           success: false,
-          message: 'Processo de REDO falhou ou encontrou erros.'
+          message: 'Processo de REDO falhou ou encontrou erros.',
+          redoTransactionsList: result.redoTransactionsList, 
+          appliedData: result.appliedData                   
         });
       }
     } catch (error) {
       console.error('Erro inesperado no RedoController:', error);
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: 'Erro interno do servidor ao tentar realizar a operação de REDO.',
+        redoTransactionsList: [],
+        appliedData: []
       });
     }
   }
